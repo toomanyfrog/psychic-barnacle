@@ -1,0 +1,19 @@
+{
+  "name": "psychic-barnacle",
+  "version": "1.0.0",
+  "description": "a web service that will autocalibrate a camera-projector system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://tyuiwei@github.com/tyuiwei/psychic-barnacle.git"
+  },
+  "author": "yooiv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tyuiwei/psychic-barnacle/issues"
+  },
+  "homepage": "https://github.com/tyuiwei/psychic-barnacle#readme"
+}

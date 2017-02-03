@@ -1,7 +1,3 @@
-import numpy as np
-import numpy.linalg as la
-import cv2
-import cv2.cv as cv
 
 # 1) project patterns
 # 2) compare with photo
@@ -11,8 +7,8 @@ import cv2.cv as cv
 
 patterns, display = [], []
 
-def readImgs():
-    global patterns, display
+def readPats():
+    global patterns
     #calibration images
     patterns.append(cv2.imread('patterns/pat1.jpg',  0))
     patterns.append(cv2.imread('patterns/pat2.jpg',  0))
@@ -20,6 +16,7 @@ def readImgs():
     patterns.append(cv2.imread('patterns/pat4.jpg',  0))
     patterns.append(cv2.imread('patterns/patall.jpg',0))
 
+def readDisplayImgs():
     #display images
     # TODO: add support for video
     display = cv2.imread('display/display.jpg', 0)

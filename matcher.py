@@ -13,6 +13,8 @@ from colourmatch import ColourMatch
 
 
 cm = ColourMatch()
+original_image = cv2.imread("imgs/test1.jpg")
+original_centers = [[436, 101], [110, 251], [429, 247], [266, 98]]
 
 def calibrate():
     img = cv2.imread("imgs/dark.jpg")
@@ -28,10 +30,10 @@ def calibrate():
 
     for c in contours:
         # compute the center of the contour
-    	M = cv2.moments(c)
-    	cX = int(M["m10"] / M["m00"])
-    	cY = int(M["m01"] / M["m00"])
-        centroids.append((cX, cY))
+        M = cv2.moments(c)
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+        centroids.append([cX, cY])
 
         # draw the contour and center of the shape on the image
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
@@ -43,10 +45,54 @@ def calibrate():
         cv2.imshow("Image", img)
         cv2.waitKey(0)
 
+    print centroids
+    new_points = []
+    transform = sourceToDest(centroids, original_centers)
+    print transform
+    out_2 = cv.fromarray(np.zeros((3000,3000,3),np.uint8))
+    cv.WarpPerspective(cv.fromarray(original_image), out_2, cv.fromarray(transform))
+    cv.ShowImage("test", out_2)
+    cv.SaveImage("result.png", out_2)
+    cv2.waitKey()
+    # cv2.warpPerspective(original_image, transform, dsize[, dst[, flags[, borderMode[, borderValue]]]])
+    # for x in range(4):
+    #     new_p getDest(original_centers[x], transform)
+
+
     #TODO: find homography from four points
         # take photo of (new) calibration img projected on wall
         # find homography from camera image to original
         # apply transform
+
+
+def scaleByCoeff(point1, point2, point3, point4):
+    a = np.array([[point1[0], point2[0], point3[0]], [point1[1], point2[1], point3[1]], [1,1,1]])
+    b = np.array([point4[0],point4[1], 1])
+    x = np.linalg.solve(a,b) #coefficients
+    A = np.array([[x[0]*point1[0], x[1]*point2[0], x[2]*point3[0]],
+                 [x[0]*point1[1], x[1]*point2[1], x[2]*point3[1]],
+                 x.transpose()])
+    return A
+
+def adjoint(A):
+    return np.array([[A[1,1]*A[2,2]-A[1,2]*A[2,1], A[0,2]*A[2,1]-A[0,1]*A[2,2], A[0,1]*A[1,2]-A[0,2]*A[1,1]],
+                     [A[1,2]*A[2,0]-A[1,0]*A[2,2], A[0,0]*A[2,2]-A[0,2]*A[2,0], A[0,2]*A[1,0]-A[0,0]*A[1,2]],
+                     [A[1,0]*A[2,1]-A[1,1]*A[2,0], A[0,1]*A[2,0]-A[0,0]*A[2,1], A[0,0]*A[1,1]-A[0,1]*A[1,0]]])
+
+def sourceToDest(source,dest):
+    basisToSource = scaleByCoeff(source[0], source[1], source[2], source[3])
+    sourceToBasis = adjoint(basisToSource)
+    basisToDest = scaleByCoeff(dest[0],dest[1],dest[2],dest[3])
+    a = np.dot(basisToDest, sourceToBasis)
+    print "a", a
+    return a
+
+def getDest(source, transform):
+    s = np.array([source[0], source[1], 1]) #homogeneous
+    t = np.dot(transform, s)
+    print transform, s
+    return np.array([[t[0]/t[2], t[1]/t[2]], t[2]])
+
 
 
 

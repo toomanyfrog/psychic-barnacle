@@ -10,6 +10,12 @@ from colourmatch import ColourMatch
 # use contours to find a centroid
 # use the centroids to compute a homography
 
+# ==========================================
+
+# find cyan circles - these are the ends of the projection
+# TODO: figure out how do the geometic correction easily
+# TODO: implemetn the web part asap
+
 
 
 cm = ColourMatch()

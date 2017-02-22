@@ -14,7 +14,7 @@ from colourmatch import ColourMatch
 
 # find cyan circles - these are the ends of the projection
 # TODO: figure out how do the geometic correction easily
-# TODO: implemetn the web part asap
+# TODO: implemetn the web part asapa
 
 
 

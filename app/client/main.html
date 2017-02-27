@@ -1,54 +1,36 @@
 <head>
-  <title>app</title>
+  <title>Simplest upload form</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">psychic-barnacle</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            {{> signin}}
-        </div><!--/.navbar-collapse -->
-      </div>
-    </nav>
-    <div class="jumbotron">
-      <div class="container">
-          {{> info}}
+  <h1>Simplest upload form!</h1>
+  <p>See <a href="https://github.com/VeliovGroup/Meteor-Files">ostrio:files</a></p>
 
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
-      </div>
-    </div>
+  {{> uploadForm}}
 
-  {{> hello}}
-
-  
+  {{> uploadedFiles}}
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="uploadForm">
+  {{#with currentUpload}}
+    Uploading <b>{{file.name}}</b>:
+    <span id="progress">{{progress.get}}%</span>
+  {{else}}
+    <input id="fileInput" type="file" />
+    <p><small>Upload file in <code>jpeg</code> or <code>png</code> format, with size less or equal to 10MB</small></p>
+  {{/with}}
 </template>
 
-<template name="info">
-  <h1>Easy Camera-Projector Calibration</h1>
-</template>
-
-<template name="signin">
-    <form class="navbar-form navbar-right">
-      <div class="form-group">
-        <input type="text" placeholder="Email" class="form-control">
-      </div>
-      <div class="form-group">
-        <input type="password" placeholder="Password" class="form-control">
-      </div>
-      <button type="submit" class="btn btn-success">Sign in</button>
-    </form>
+<template name="uploadedFiles">
+  {{#if uploadedFiles.count}}
+    <ul>
+      {{#each file in uploadedFiles.each}}
+        <li>
+          <a href="{{file.link}}?download=true" download="{{file.name}}">{{file.name}}</a>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <div>No files uploaded, yet</div>
+  {{/if}}
 </template>

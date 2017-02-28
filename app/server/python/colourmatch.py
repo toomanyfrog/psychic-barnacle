@@ -5,7 +5,6 @@ import cv2.cv as cv
 import imutils
 
 class ColourMatch:
-    img = cv2.imread("../imgs/light.jpg")
     low_lower_red = np.array([0,100,100])
     low_upper_red = np.array([10,255,255])
     hi_lower_red = np.array([170,100,100])

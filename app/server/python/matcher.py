@@ -3,6 +3,7 @@ import numpy.linalg as la
 import cv2
 import cv2.cv as cv
 from colourmatch import ColourMatch
+import sys
 
 # look at the photo
 # identify coloured circles
@@ -13,24 +14,23 @@ from colourmatch import ColourMatch
 # ==========================================
 
 # find cyan circles - these are the ends of the projection
-# TODO: figure out how do the geometic correction easily
-# TODO: implemetn the web part asapa
 
 
+def calibrate(cm, original_image, original_centers, filepath, filename):
+    print "filepath: " + filepath
+    img = cv2.imread(filepath)
+    height, width = img.shape[:2]
+    corners = [[0,0], [width, 0], [height,width], [0, height]]
 
-cm = ColourMatch()
-original_image = cv2.imread("imgs/test1.jpg")
-original_centers = [[436, 101], [110, 251], [429, 247], [266, 98]]
-
-def calibrate():
-    img = cv2.imread("imgs/light.jpg")
+    #cv2.imshow('a', img)
+    #cv2.waitKey(0)
     contours = []
     centroids = []
     for colour_index in range(0,4):
-        mask = cm.threshold_colour(cm.img, colour_index)
+        mask = cm.threshold_colour(img, colour_index)
         blurred = cv2.GaussianBlur(mask,(49,49),0)
-        cv2.imshow('b', blurred)
-        cv2.waitKey(0)
+        #cv2.imshow('b', blurred)
+        #cv2.waitKey(0)
         #cm.getCircles(a)
         contours.append(cm.get_contours(blurred))
 
@@ -48,17 +48,15 @@ def calibrate():
             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
         # show the image
-        cv2.imshow("Image", img)
-        cv2.waitKey(0)
+        #cv2.imshow("Image", img)
+        #cv2.waitKey(0)
 
-    print centroids
     new_points = []
     transform = sourceToDest(centroids, original_centers)
-    print transform
-    out_2 = cv.fromarray(np.zeros((3000,3000,3),np.uint8))
+    out_2 = cv.fromarray(np.zeros((1000,1000,3),np.uint8))
     cv.WarpPerspective(cv.fromarray(original_image), out_2, cv.fromarray(transform))
-    cv.ShowImage("test", out_2)
-    cv.SaveImage("result.png", out_2)
+    #cv.ShowImage("test", out_2)
+    cv.SaveImage(filename, out_2)
     cv2.waitKey()
     # cv2.warpPerspective(original_image, transform, dsize[, dst[, flags[, borderMode[, borderValue]]]])
     # for x in range(4):
@@ -102,5 +100,14 @@ def getDest(source, transform):
 
 
 
+def main():
+    filepath = sys.argv[1] #read_in()
+    filename = sys.argv[2]
+    cm = ColourMatch()
+    original_image = cv2.imread("test2.jpg")
+    original_centers = [[436, 101], [110, 251], [429, 247], [266, 98]]
+    calibrate(cm, original_image, original_centers, filepath, filename)
 
-calibrate()
+
+if __name__ == '__main__':
+    main()

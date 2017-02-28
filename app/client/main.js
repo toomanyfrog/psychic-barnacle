@@ -40,7 +40,8 @@ Template.uploadForm.events({
           if (error) {
             alert('Error during upload: ' + error.reason);
           } else {
-            alert('File "' + fileObj.name + '" successfully uploaded');
+              console.log(fileObj)
+            console.log('File "' + fileObj._id + fileObj.extensionWithDot + '" successfully uploaded');
           }
           template.currentUpload.set(false);
         });

@@ -1,5 +1,5 @@
 this.Images = new Meteor.Files({
-    storagePath: function() { return '../../../../../data/uploads'; },
+    storagePath: function() { return '../../../../../server/camera'; },
     debug: true,
     collectionName: 'Images',
     allowClientCode: false, // Disallow remove files from Client

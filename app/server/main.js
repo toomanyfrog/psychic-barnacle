@@ -1,9 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-import { WebApp } from 'meteor/webapp';
-var fs = Npm.require('fs');
-var exec = Npm.require('child_process').exec;
-var Fiber = Npm.require('fibers');
-var Future = Npm.require('fibers/future');
+var PythonShell = require('python-shell');
+
 
 Meteor.startup(() => {
   // code to run on server at startup
@@ -11,22 +8,22 @@ Meteor.startup(() => {
 });
 
 
-
 Meteor.methods({
 
-  callPython: function() {
-    var fut = new Future();
-    exec('pythonScriptCommand with parameters', function (error, stdout, stderr) {
+    callPython: function(filepath, filename) {
+        var options = {
+            mode: 'text',
+            pythonPath: 'path/to/python',
+            pythonOptions: ['-u'],
+            scriptPath: 'path/to/my/scripts',
+            args: [filepath, filename]
+        };
 
-      // if you want to write to Mongo in this callback
-      // you need to get yourself a Fiber
-      new Fiber(function() {
-        ...
-        fut.return('Python was here');
-      }).run();
-
-    });
-    return fut.wait();
+        PythonShell.run('matcher.py', options, function (err, results) {
+            if (err) throw err;
+            // results is an array consisting of messages collected during execution
+            console.log('results: %j', results);
+        });
   },
 
 });

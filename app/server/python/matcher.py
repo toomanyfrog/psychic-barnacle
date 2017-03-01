@@ -19,9 +19,6 @@ import sys
 def calibrate(cm, original_image, original_centers, filepath, filename):
     print "filepath: " + filepath
     img = cv2.imread(filepath)
-    height, width = img.shape[:2]
-    corners = [[0,0], [width, 0], [height,width], [0, height]]
-
     #cv2.imshow('a', img)
     #cv2.waitKey(0)
     contours = []
@@ -45,18 +42,18 @@ def calibrate(cm, original_image, original_centers, filepath, filename):
         cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
         cv2.circle(img, (cX, cY), 7, (255, 255, 255), -1)
         cv2.putText(img, "center", (cX - 20, cY - 20),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
         # show the image
         #cv2.imshow("Image", img)
         #cv2.waitKey(0)
 
-    new_points = []
     transform = sourceToDest(centroids, original_centers)
+    dst = fix_translation(original_image, transform)
     out_2 = cv.fromarray(np.zeros((1000,1000,3),np.uint8))
-    cv.WarpPerspective(cv.fromarray(original_image), out_2, cv.fromarray(transform))
+    cv.WarpPerspective(cv.fromarray(dst), out_2, cv.fromarray(transform))
     #cv.ShowImage("test", out_2)
-    cv.SaveImage(filename, out_2)
+    cv.SaveImage(filename, crop(out_2))
     cv2.waitKey()
     # cv2.warpPerspective(original_image, transform, dsize[, dst[, flags[, borderMode[, borderValue]]]])
     # for x in range(4):
@@ -68,6 +65,17 @@ def calibrate(cm, original_image, original_centers, filepath, filename):
         # find homography from camera image to original
         # apply transform
 
+def fix_translation(image, transform):
+    height, width = image.shape[:2]
+    corners = [[0,0], [width, 0], [height,width], [0, height]]
+    new_points = []
+    for point in corners:
+        new_points.append(getDest(point, transform))
+    #print new_points
+    top_left = new_points[0][0]
+    print top_left
+    translation = np.float32([[1,0,-1*top_left[0]],[0,1,-1*top_left[1]]])
+    return cv2.warpAffine(image, translation, (3000,3000))
 
 def scaleByCoeff(point1, point2, point3, point4):
     a = np.array([[point1[0], point2[0], point3[0]], [point1[1], point2[1], point3[1]], [1,1,1]])
@@ -94,11 +102,20 @@ def sourceToDest(source,dest):
 def getDest(source, transform):
     s = np.array([source[0], source[1], 1]) #homogeneous
     t = np.dot(transform, s)
-    print transform, s
     return np.array([[t[0]/t[2], t[1]/t[2]], t[2]])
 
+def crop(img):
+    gray = cv2.cvtColor(np.array(img),cv2.COLOR_BGR2GRAY)
+    _,thresh = cv2.threshold(gray,1,255,cv2.THRESH_BINARY)
+    #Now find contours in it. There will be only one object, so find bounding rectangle for it.
 
+    contours,hierarchy = cv2.findContours(thresh,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    cnt = contours[0]
+    x,y,w,h = cv2.boundingRect(cnt)
+    #Now crop the image, and save it into another file.
 
+    crop = img[y:y+h+10,x:x+w+10]
+    return crop
 
 def main():
     filepath = sys.argv[1] #read_in()

@@ -41,7 +41,8 @@ Template.uploadForm.events({
             alert('Error during upload: ' + error.reason);
           } else {
               console.log(fileObj)
-            console.log('File "' + fileObj._id + fileObj.extensionWithDot + '" successfully uploaded');
+              console.log('File "' + fileObj._id + fileObj.extensionWithDot + '" successfully uploaded');
+              Meteor.call('callPython')
           }
           template.currentUpload.set(false);
         });

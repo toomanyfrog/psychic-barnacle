@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 var PythonShell = require('python-shell');
+var base = process.env.PWD;
 
 
 Meteor.startup(() => {
@@ -13,9 +14,9 @@ Meteor.methods({
     callPython: function(filepath, filename) {
         var options = {
             mode: 'text',
-            pythonPath: 'path/to/python',
+        //    pythonPath: 'path/to/python',
             pythonOptions: ['-u'],
-            scriptPath: 'path/to/my/scripts',
+            scriptPath: '../python',
             args: [filepath, filename]
         };
 

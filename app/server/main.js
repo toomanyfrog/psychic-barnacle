@@ -16,7 +16,7 @@ Meteor.methods({
             mode: 'text',
         //    pythonPath: 'path/to/python',
             pythonOptions: ['-u'],
-            scriptPath: '../python',
+            scriptPath: "" + base + '/server/python',
             args: [filepath, filename]
         };
 
@@ -25,6 +25,5 @@ Meteor.methods({
             // results is an array consisting of messages collected during execution
             console.log('results: %j', results);
         });
-  },
-
+    }
 });

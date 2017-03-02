@@ -17,13 +17,17 @@ Meteor.methods({
         //    pythonPath: 'path/to/python',
             pythonOptions: ['-u'],
             scriptPath: "" + base + '/server/python',
-            args: [filepath, filename]
+            args: ["../camera/" + filepath, "../processed/" + filename]
         };
+        var pyshell = new PythonShell('matcher.py', options);
 
-        PythonShell.run('matcher.py', options, function (err, results) {
-            if (err) throw err;
-            // results is an array consisting of messages collected during execution
-            console.log('results: %j', results);
+        pyshell.on('message', function (message) {
+            // received a message sent from the Python script (a simple "print" statement)
+            console.log(message);
+        });
+
+        pyshell.on('error', function (err) {
+            console.log(err);
         });
     }
 });

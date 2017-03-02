@@ -17,7 +17,8 @@ import sys
 
 
 def calibrate(cm, original_image, original_centers, filepath, filename):
-    print "filepath: " + filepath
+    sys.stdout.write("filepath: " + filepath)
+    sys.stdout.flush()
     img = cv2.imread(filepath)
     #cv2.imshow('a', img)
     #cv2.waitKey(0)
@@ -119,7 +120,9 @@ def crop(img):
 
 def main():
     filepath = sys.argv[1] #read_in()
+    print filepath
     filename = sys.argv[2]
+    print filename
     cm = ColourMatch()
     original_image = cv2.imread("test2.jpg")
     original_centers = [[436, 101], [110, 251], [429, 247], [266, 98]]

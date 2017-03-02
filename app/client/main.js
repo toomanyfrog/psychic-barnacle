@@ -42,7 +42,7 @@ Template.uploadForm.events({
           } else {
               console.log(fileObj)
               console.log('File "' + fileObj._id + fileObj.extensionWithDot + '" successfully uploaded');
-              Meteor.call('callPython', [""+fileObj._id+fileObj.extensionWithDot, fileObj.name])
+              Meteor.call('callPython', ""+fileObj._id+fileObj.extensionWithDot, fileObj.name)
           }
           template.currentUpload.set(false);
         });
